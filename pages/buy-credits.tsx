@@ -1,23 +1,21 @@
-import { useSession } from "next-auth/react";
-import Script from "next/script";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-import Head from "next/head";
-import useSWR from "swr";
+import { useSession } from 'next-auth/react';
+import Script from 'next/script';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+import Head from 'next/head';
+import useSWR from 'swr';
 
 export default function Pricing() {
   const { data: session } = useSession();
 
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
-  const { data } = useSWR("/api/remaining", fetcher);
-
+  const { data } = useSWR('/api/remaining', fetcher);
   return (
     <div className="flex mx-auto max-w-7xl overflow-visible flex-col items-center justify-center py-2 min-h-screen">
       <Head>
         <title>Buy RoomGPT Credits</title>
       </Head>
-      <Script src="https://js.stripe.com/v3/pricing-table.js" />
-      <Script src="https://cdn.paritydeals.com/banner.js" />
+      <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
       <Header
         photo={session?.user?.image || undefined}
         email={session?.user?.email || undefined}
@@ -31,10 +29,10 @@ export default function Pricing() {
           </div>
         </div>
         <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-500 mb-10">
-          You currently have{" "}
+          You currently have{' '}
           <span className="font-semibold text-gray-400">
-            {data?.remainingGenerations}{" "}
-            {data?.remainingGenerations > 1 ? "credits" : "credit"}
+            {data?.remainingGenerations}{' '}
+            {data?.remainingGenerations > 1 ? 'credits' : 'credit'}
           </span>
           . Purchase more below.
         </p>
@@ -43,8 +41,8 @@ export default function Pricing() {
         {session?.user?.email && (
           // @ts-ignore
           <stripe-pricing-table
-            pricing-table-id="prctbl_1MobnNK4W9ejG97elHjeFCEq"
-            publishable-key="pk_live_51HGpOvK4W9ejG97eYSm02d1hgagCOAAcKQCtH7258w6fA8wxo2PRv2xs2wSUG2xkV2YLBc0h3HxKITTFeJGtWai500o6bqGFHF"
+            pricing-table-id="prctbl_1N0V1dFIVSRrlYP9FaSgniE3"
+            publishable-key="pk_test_51N0UVQFIVSRrlYP93TRMAzCHJmet0gGEbyq6kM6oTNV0G7cpjwS2zkbxzxbqzUZiiJTQJ2PJg3GJumPPlqGWXBQe00XPYzxg1E"
             client-reference-id={session.user.email}
             customer-email={session.user.email}
           />
@@ -67,9 +65,9 @@ export default function Pricing() {
             aria-hidden="true"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
           Save your generated rooms
@@ -83,9 +81,9 @@ export default function Pricing() {
             aria-hidden="true"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
           Get more room styles and room types
@@ -99,9 +97,9 @@ export default function Pricing() {
             aria-hidden="true"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
           Premium support by email
@@ -115,9 +113,9 @@ export default function Pricing() {
             aria-hidden="true"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
           Ability to request features
@@ -130,9 +128,9 @@ export default function Pricing() {
             aria-hidden="true"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
           Commercial usage of photos
@@ -145,16 +143,16 @@ export default function Pricing() {
             aria-hidden="true"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
           Early access to new features
         </li>
       </ul>
       <p className="text-gray-400 mb-5">
-        Interested in team pricing or have any pricing questions? Email{" "}
+        Interested in team pricing or have any pricing questions? Email{' '}
         <span className="text-gray-300">hassan@roomgpt.io</span>
       </p>
       <Footer />
