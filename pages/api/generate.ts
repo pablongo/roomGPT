@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "./auth/[...nextauth]";
-import prisma from "../../lib/prismadb";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from './auth/[...nextauth]';
+import prisma from '../../lib/prismadb';
 
 export type GenerateResponseData = {
   original: string | null;
@@ -24,17 +24,17 @@ export default async function handler(
   // Check if user is logged in
   const session = await getServerSession(req, res, authOptions);
   if (!session || !session.user) {
-    return res.status(500).json("Login to upload.");
+    return res.status(500).json('Login to upload.');
   }
 
   // Get user from DB
   const user = await prisma.user.findUnique({
     where: {
-      email: session.user.email!,
+      email: session.user.email!
     },
     select: {
-      credits: true,
-    },
+      credits: true
+    }
   });
 
   // Check if user has any credits left
@@ -45,44 +45,44 @@ export default async function handler(
   // If they have credits, decrease their credits by one and continue
   await prisma.user.update({
     where: {
-      email: session.user.email!,
+      email: session.user.email!
     },
     data: {
       credits: {
-        decrement: 1,
-      },
-    },
+        decrement: 1
+      }
+    }
   });
 
   try {
     const { imageUrl, theme, room } = req.body;
     const prompt =
-      room === "Gaming Room"
-        ? "a video gaming room"
+      room === 'Gaming Room'
+        ? 'a video gaming room'
         : `a ${theme.toLowerCase()} ${room.toLowerCase()}`;
 
     // POST request to Replicate to start the image restoration generation process
     let startResponse = await fetch(
-      "https://api.replicate.com/v1/predictions",
+      'https://api.replicate.com/v1/predictions',
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Token " + process.env.REPLICATE_API_KEY,
+          'Content-Type': 'application/json',
+          Authorization: 'Token ' + process.env.REPLICATE_API_KEY
         },
         body: JSON.stringify({
           version:
-            "854e8727697a057c525cdb45ab037f64ecca770a1769cc52287c2e56472a247b",
+            '854e8727697a057c525cdb45ab037f64ecca770a1769cc52287c2e56472a247b',
           input: {
             image: imageUrl,
             prompt: prompt,
             scale: 9,
             a_prompt:
-              "best quality, photo from Pinterest, interior, cinematic photo, ultra-detailed, ultra-realistic, award-winning, interior design, natural lighting",
+              'best quality, photo from Pinterest, interior, cinematic photo, ultra-detailed, ultra-realistic, award-winning, interior design, natural lighting',
             n_prompt:
-              "longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality",
-          },
-        }),
+              'longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality'
+          }
+        })
       }
     );
 
@@ -97,17 +97,17 @@ export default async function handler(
     while (!generatedImage) {
       // Loop in 1s intervals until the alt text is ready
       let finalResponse = await fetch(endpointUrl, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Token " + process.env.REPLICATE_API_KEY,
-        },
+          'Content-Type': 'application/json',
+          Authorization: 'Token ' + process.env.REPLICATE_API_KEY
+        }
       });
       let jsonFinalResponse = await finalResponse.json();
 
-      if (jsonFinalResponse.status === "succeeded") {
+      if (jsonFinalResponse.status === 'succeeded') {
         generatedImage = jsonFinalResponse.output[1] as string;
-      } else if (jsonFinalResponse.status === "failed") {
+      } else if (jsonFinalResponse.status === 'failed') {
         break;
       } else {
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -120,16 +120,16 @@ export default async function handler(
           replicateId: roomId,
           user: {
             connect: {
-              email: session.user.email!,
-            },
+              email: session.user.email!
+            }
           },
           inputImage: originalImage,
           outputImage: generatedImage,
-          prompt: prompt,
-        },
+          prompt: prompt
+        }
       });
     } else {
-      throw new Error("Failed to restore image");
+      throw new Error('Failed to restore image');
     }
 
     res.status(200).json(
@@ -137,23 +137,23 @@ export default async function handler(
         ? {
             original: originalImage,
             generated: generatedImage,
-            id: roomId,
+            id: roomId
           }
-        : "Failed to restore image"
+        : 'Failed to restore image'
     );
   } catch (error) {
     // Increment their credit if something went wrong
     await prisma.user.update({
       where: {
-        email: session.user.email!,
+        email: session.user.email!
       },
       data: {
         credits: {
-          increment: 1,
-        },
-      },
+          increment: 1
+        }
+      }
     });
     console.error(error);
-    res.status(500).json("Failed to restore image");
+    res.status(500).json('Failed to restore image');
   }
 }

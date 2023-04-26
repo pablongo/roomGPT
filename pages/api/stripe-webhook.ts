@@ -1,29 +1,29 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../lib/prismadb";
-import Stripe from "stripe";
-import { buffer } from "micro";
-import Cors from "micro-cors";
+import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '../../lib/prismadb';
+import Stripe from 'stripe';
+import { buffer } from 'micro';
+import Cors from 'micro-cors';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2022-11-15",
+  apiVersion: '2022-11-15'
 });
 
 export const config = {
   api: {
-    bodyParser: false,
-  },
+    bodyParser: false
+  }
 };
 
-const webhookSecret: string = process.env.STRIPE_WEBHOOK_SECRET || "";
+const webhookSecret: string = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 const cors = Cors({
-  allowMethods: ["POST", "HEAD"],
+  allowMethods: ['POST', 'HEAD']
 });
 
 const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
+  if (req.method === 'POST') {
     const buf = await buffer(req);
-    const sig = req.headers["stripe-signature"]!;
+    const sig = req.headers['stripe-signature']!;
 
     let event: Stripe.Event;
 
@@ -33,8 +33,9 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         sig,
         webhookSecret
       );
+      console.log('TODO BIEN');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       // On error, log and return the error message.
       if (err! instanceof Error) console.log(err);
       console.log(`❌ Error message: ${errorMessage}`);
@@ -43,12 +44,12 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // Successfully constructed event.
-    console.log("✅ Success:", event.id);
+    console.log('✅ Success:', event.id);
 
     // Cast event data to Stripe object.
     if (
-      event.type === "payment_intent.succeeded" ||
-      event.type === "checkout.session.completed"
+      event.type === 'payment_intent.succeeded' ||
+      event.type === 'checkout.session.completed'
     ) {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       console.log(`💰 PaymentIntent: ${JSON.stringify(paymentIntent)}`);
@@ -79,13 +80,13 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
       await prisma.user.update({
         where: {
-          email: userEmail,
+          email: userEmail
         },
         data: {
           credits: {
-            increment: creditAmount,
-          },
-        },
+            increment: creditAmount
+          }
+        }
       });
 
       await prisma.purchase.create({
@@ -93,17 +94,17 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           creditAmount: creditAmount,
           user: {
             connect: {
-              email: userEmail,
-            },
-          },
-        },
+              email: userEmail
+            }
+          }
+        }
       });
-    } else if (event.type === "payment_intent.payment_failed") {
+    } else if (event.type === 'payment_intent.payment_failed') {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       console.log(
         `❌ Payment failed: ${paymentIntent.last_payment_error?.message}`
       );
-    } else if (event.type === "charge.succeeded") {
+    } else if (event.type === 'charge.succeeded') {
       const charge = event.data.object as Stripe.Charge;
       console.log(`💵 Charge id: ${charge.id}`);
     } else {
@@ -113,8 +114,8 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     // Return a response to acknowledge receipt of the event. Upgraded.
     res.json({ received: true });
   } else {
-    res.setHeader("Allow", "POST");
-    res.status(405).end("Method Not Allowed");
+    res.setHeader('Allow', 'POST');
+    res.status(405).end('Method Not Allowed');
   }
 };
 
