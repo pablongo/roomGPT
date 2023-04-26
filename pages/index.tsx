@@ -1,11 +1,11 @@
-import { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-import SquigglyLines from "../components/SquigglyLines";
-import { Testimonials } from "../components/Testimonials";
+import { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+import SquigglyLines from '../components/SquigglyLines';
+import { Testimonials } from '../components/Testimonials';
 
 const Home: NextPage = () => {
   return (
@@ -16,21 +16,12 @@ const Home: NextPage = () => {
 
       <Header />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 sm:mt-20 mt-20 background-gradient">
-        <a
-          href="https://vercel.fyi/roomGPT"
-          target="_blank"
-          rel="noreferrer"
-          className="border border-gray-700 rounded-lg py-2 px-4 text-gray-400 text-sm mb-5 transition duration-300 ease-in-out hover:text-gray-300"
-        >
-          Clone and deploy your own with{" "}
-          <span className="text-blue-600">Vercel</span>
-        </a>
         <h1 className="mx-auto max-w-4xl font-display text-5xl font-bold tracking-normal text-gray-300 sm:text-7xl">
-          Generating dream rooms{" "}
+          Generating dream rooms{' '}
           <span className="relative whitespace-nowrap text-blue-600">
             <SquigglyLines />
             <span className="relative">using AI</span>
-          </span>{" "}
+          </span>{' '}
           for everyone.
         </h1>
         <h2 className="mx-auto mt-12 max-w-xl text-lg sm:text-gray-400  text-gray-500 leading-7">
